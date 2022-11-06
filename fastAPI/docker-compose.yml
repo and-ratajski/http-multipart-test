@@ -1,0 +1,17 @@
+version: '3.5'
+
+services:
+  uploader:
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+#    platform: linux/amd64  # Doesn't work on (a)amr architecture
+    image: and-rat/http-test-fastapi
+    container_name: and-rat-http-test-fastapi
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./app/logs:/app/logs
+    ports:
+      - "8080:80"
+#    command: >
+#      sh -c "python main.py"
