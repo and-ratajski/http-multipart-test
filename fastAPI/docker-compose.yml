@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: ./.docker/Dockerfile
-#    platform: linux/amd64  # Doesn't work on (a)amr architecture
-    image: and-rat/http-test-fastapi
-    container_name: and-rat-http-test-fastapi
+#    platform: linux/amd64
+    image: andrat/http-test-fastapi
+    container_name: andrat-http-test-fastapi
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./app/logs:/app/logs

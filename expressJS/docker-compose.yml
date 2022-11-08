@@ -1,0 +1,23 @@
+version: '3.5'
+
+services:
+
+  connector-capacity-service:
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+    # platform: linux/amd64
+    image: andrat/http-test-expressjs
+    container_name: andrat-http-test-expressjs
+    env_file:
+      - ./app/.env.development
+    volumes:
+     - andrat-expressjs:/app/node_modules
+     - ./app:/app
+    ports:
+      - "8081:3000"
+    command: >
+      sh -c "yarn start:dev"
+
+volumes:
+  andrat-expressjs:
