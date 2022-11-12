@@ -42,7 +42,7 @@ async def upload_form():
 <body>
 <form action="/test/" 
 enctype="multipart/form-data" method="post">
-<input name="upload-file" type="file" multiple>
+<input name="uploadFile" type="file" multiple>
 <input type="submit" value="Upload">
 </form>
 </body>
@@ -59,7 +59,7 @@ async def upload_tes_file(
     background_tasks: BackgroundTasks,
     upload_file: UploadFile = File(
         description="Test file (the bigger the better)",
-        alias="upload-file",
+        alias="uploadFile",
     ),
 ):
     logger.info("Called `/test` endpoint, starting work...")

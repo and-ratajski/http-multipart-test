@@ -16,18 +16,19 @@ app.get("/", (req: Request, res: Response): void => {
   res.redirect("/form.html");
 });
 
-app.post("/upload", (req: Request, res: Response, next: NextFunction): void => {
+app.post("/upload", (req: Request, res: Response): void => {
   const form = formidable({
     uploadDir: UPLOAD_DIR,
     maxFileSize: 5 * 1024 * 1024 * 1024, // 5Gb
   });
   form.parse(req, (err, _, files) => {
     if (err) {
-      next(err);
-      return;
+      console.log(err);
+      return res.end("Error while uploading file.");
     }
-    res.sendFile((files["upload-file"] as any)["filepath"], null, (err) => {
+    res.sendFile((files["uploadFile"] as any)["filepath"], null, (err) => {
       if (err) {
+        console.log(err);
         return res.end("Error while downloading file.");
       }
     });

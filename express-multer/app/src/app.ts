@@ -6,7 +6,7 @@ dotenv.config();
 const DEV_ENV = "development";
 const PROD_ENV = "production";
 const PORT = process.env.APP_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || "/uploads"
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "/uploads";
 
 const app: Application = express();
 const storage: multer.StorageEngine = multer.diskStorage({
@@ -17,7 +17,12 @@ const storage: multer.StorageEngine = multer.diskStorage({
     callback(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage }).single("upload-file");
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 * 1024, // 5Gb
+  },
+}).single("uploadFile");
 
 app.use(express.json());
 app.use(express.static("public"));
@@ -29,11 +34,13 @@ app.get("/", (req: Request, res: Response): void => {
 app.post("/upload", (req: Request, res: Response): void => {
   upload(req, res, (err) => {
     if (err) {
+      console.log(err);
       return res.end("Error while uploading file.");
     }
     // Return uploaded file
     res.sendFile(`${UPLOAD_DIR}/${req.file?.originalname}`, null, (err) => {
       if (err) {
+        console.log(err);
         return res.end("Error while downloading file.");
       }
     });
