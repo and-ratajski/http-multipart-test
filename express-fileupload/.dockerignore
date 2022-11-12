@@ -1,3 +1,9 @@
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # Ignore .git and .cache folders
 .git
 .cache

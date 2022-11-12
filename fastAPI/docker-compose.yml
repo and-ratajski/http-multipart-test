@@ -6,12 +6,12 @@ services:
       context: .
       dockerfile: ./.docker/Dockerfile
 #    platform: linux/amd64
-    image: andrat/http-test-fastapi
-    container_name: andrat-http-test-fastapi
+    image: andrat/multipart-fastapi
+    container_name: andrat-multipart-fastapi
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./app/logs:/app/logs
     ports:
-      - "8080:80"
+      - 8080:80
 #    command: >
 #      sh -c "python main.py"

@@ -1,7 +1,7 @@
 {
-  "name": "expresJS-streaming-test",
+  "name": "express-fileupload-multipart-upload",
   "version": "0.0.1",
-  "description": "Testing ExpresJS steaming preformance",
+  "description": "Testing ExpressJS steaming preformance",
   "main": "app.js",
   "author": "Andrzej Ratajski",
   "license": "MIT",
