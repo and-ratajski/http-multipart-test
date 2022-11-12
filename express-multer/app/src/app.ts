@@ -6,11 +6,12 @@ dotenv.config();
 const DEV_ENV = "development";
 const PROD_ENV = "production";
 const PORT = process.env.APP_PORT || 3000;
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "/uploads"
 
 const app: Application = express();
 const storage: multer.StorageEngine = multer.diskStorage({
   destination: (_, __, callback) => {
-    callback(null, "/uploads");
+    callback(null, UPLOAD_DIR);
   },
   filename: (_, file, callback) => {
     callback(null, file.originalname);
@@ -31,7 +32,7 @@ app.post("/upload", (req: Request, res: Response): void => {
       return res.end("Error while uploading file.");
     }
     // Return uploaded file
-    res.sendFile(`/uploads/${req.file?.originalname}`, null, (err) => {
+    res.sendFile(`${UPLOAD_DIR}/${req.file?.originalname}`, null, (err) => {
       if (err) {
         return res.end("Error while downloading file.");
       }
