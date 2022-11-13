@@ -2,12 +2,13 @@ import logging
 import os
 import subprocess
 import time
+import aiofiles
 
-from fastapi import BackgroundTasks, FastAPI, File, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, UploadFile, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
 LOG_FILE = "logs/service.log"
-logger = logging.getLogger("fastAPI")
+logger = logging.getLogger("fastAPI-default")
 log_format = logging.Formatter(f"%(asctime)s [%(levelname)s] %(name)s: %(message)s ")
 log_handler = logging.FileHandler(LOG_FILE)
 log_handler.setFormatter(log_format)
@@ -40,7 +41,7 @@ def clear_tmp_files() -> None:
 async def upload_form():
     content = """
 <body>
-<form action="/test/" 
+<form action="/upload/" 
 enctype="multipart/form-data" method="post">
 <input name="uploadFile" type="file" multiple>
 <input type="submit" value="Upload">
@@ -51,27 +52,18 @@ enctype="multipart/form-data" method="post">
 
 
 @app.post(
-    "/test",
+    "/upload",
     summary="Test streaming (multipart) test",
     response_class=FileResponse,
 )
-async def upload_tes_file(
-    background_tasks: BackgroundTasks,
-    upload_file: UploadFile = File(
-        description="Test file (the bigger the better)",
-        alias="uploadFile",
-    ),
-):
-    logger.info("Called `/test` endpoint, starting work...")
-    start_time = time.time()
-    save_path = os.path.join("/app/tmp", upload_file.filename)
+async def upload(request: Request):
+    try:
+        filename = request.headers["filename"]
+        save_path = os.path.join("/uploads", filename)
+        async with aiofiles.open(save_path, "wb") as f:
+            async for chunk in request.stream():
+                await f.write(chunk)
+    except Exception:
+        return {"message": "There was an error uploading the file"}
 
-    with open(save_path, "wb+") as in_file:
-        in_file.write(upload_file.file.read())
-
-    end_time = time.time()
-    background_tasks.add_task(
-        logger.info, f"Work was done in {end_time-start_time} sec."
-    )
-    background_tasks.add_task(clear_tmp_files)
     return save_path

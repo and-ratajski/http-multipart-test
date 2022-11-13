@@ -18,5 +18,6 @@ services:
       - ./app:/app
     ports:
       - 8082:${APP_PORT}
+    mem_limit: 200m
     command: >
       sh -c "yarn start:dev"

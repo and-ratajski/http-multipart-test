@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import express, { Request, Response, Application, NextFunction } from "express";
+import express, { Request, Response, Application } from "express";
 import formidable from "formidable";
 
 dotenv.config();
