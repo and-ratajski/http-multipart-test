@@ -1,34 +1,35 @@
-import logging
+# import logging
 import os
 import subprocess
-import time
 
 from fastapi import BackgroundTasks, FastAPI, File, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.concurrency import run_in_threadpool
+import shutil
 
-LOG_FILE = "logs/service.log"
-logger = logging.getLogger("fastAPI-default")
-log_format = logging.Formatter(f"%(asctime)s [%(levelname)s] %(name)s: %(message)s ")
-log_handler = logging.FileHandler(LOG_FILE)
-log_handler.setFormatter(log_format)
-logger.addHandler(log_handler)
-logger.setLevel("INFO")
+# LOG_FILE = "logs/service.log"
+# logger = logging.getLogger("fastAPI-default")
+# log_format = logging.Formatter(f"%(asctime)s [%(levelname)s] %(name)s: %(message)s ")
+# log_handler = logging.FileHandler(LOG_FILE)
+# log_handler.setFormatter(log_format)
+# logger.addHandler(log_handler)
+# logger.setLevel("INFO")
 
 app = FastAPI()
 
 
-def clear_tmp_files() -> None:
-    """Clears temporary files"""
-    logger.info(f"Clearing temporary files...")
-    try:
-        subprocess.run(
-            [f"rm -rf /app/tmp/*"],
-            check=True,
-            shell=True,
-        )
-    except Exception:
-        logger.exception("Exception during clearing tmp files.")
-    return
+# def clear_tmp_files() -> None:
+#     """Clears temporary files"""
+#     # logger.info(f"Clearing temporary files...")
+#     try:
+#         subprocess.run(
+#             [f"rm -rf /app/tmp/*"],
+#             check=True,
+#             shell=True,
+#         )
+#     except Exception:
+#         logger.exception("Exception during clearing tmp files.")
+#     return
 
 
 @app.get(
@@ -55,27 +56,31 @@ enctype="multipart/form-data" method="post">
     summary="Test streaming (multipart) test",
     response_class=FileResponse,
 )
-def upload_test_file(
-    background_tasks: BackgroundTasks,
+async def upload_test_file(
+    # background_tasks: BackgroundTasks,
     upload_file: UploadFile = File(
         description="Test file (the bigger the better)",
         alias="uploadFile",
     ),
 ):
-    logger.info("Called `/upload` endpoint, starting work...")
-    start_time = time.time()
     save_path = os.path.join("/uploads", upload_file.filename)
 
-    with open(save_path, "wb+") as in_file:
-        in_file.write(upload_file.file.read())
-    upload_file.file.close()
+    # https://stackoverflow.com/questions/65342833/fastapi-uploadfile-is-slow-compared-to-flask
+    try:
+        f = await run_in_threadpool(open, save_path, "wb")
+        await run_in_threadpool(shutil.copyfileobj, upload_file.file, f)
+    except Exception:
+        return {"message": "There was an error uploading the file"}
+    finally:
+        if "f" in locals():
+            await run_in_threadpool(f.close)
+        await upload_file.close()
 
-    end_time = time.time()
-    background_tasks.add_task(
-        logger.info, f"Work was done in {end_time-start_time} sec."
-    )
-    background_tasks.add_task(clear_tmp_files)
-    # return JSONResponse({"timeElapsed": f"{end_time-start_time}"})
+    # with open(save_path, "wb+") as in_file:
+    #     in_file.write(upload_file.file.read())
+    # upload_file.file.close()
+
+    # background_tasks.add_task(clear_tmp_files)
     return FileResponse(
         save_path,
         media_type="application/octet-stream",

@@ -14,7 +14,7 @@ services:
       - ./app/.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./app/logs:/app/logs
+#      - ./app/logs:/app/logs
     ports:
       - "8084:80"
 #    mem_limit: 300m
