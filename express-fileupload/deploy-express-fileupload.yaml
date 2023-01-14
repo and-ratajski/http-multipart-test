@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: express-fileupload
+  name: express-fileupload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express-fileupload
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: express-fileupload
+    spec:
+      containers:
+      - image: effiware/artic-multipart-express-fileupload
+        imagePullPolicy: Never
+        name: artic-multipart-express-fileupload
+        ports:
+        - containerPort: 3000
+        resources: {}
+        command: 
+          - "yarn"
+        args: 
+          - "start:dev"
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: express-fileupload
+  name: express-fileupload
+spec:
+  ports:
+  - name: 3000-3000
+    nodePort: 30081
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: express-fileupload
+  type: NodePort
+status:
+  loadBalancer: {}
+
+# Other service setup possibility(ies):
+# 1. (current)
+#   kubectl create service nodeport express-fileupload --tcp=3000:3000 --node-port=30081
+# 2.
+#   kubectl expose deployment/express-fileupload --type="NodePort" --port 3000
+#   export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+#   echo NODE_PORT=$NODE_PORT

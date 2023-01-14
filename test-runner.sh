@@ -1,12 +1,12 @@
 #!/bin/bash
 
-first_port=8082
-last_port=8085
+first_port=30081
+last_port=30085
 tests_amount=10
 test_file_1=test-file-1.tmp
 test_file_2=test-file-2.tmp
 test_file_3=test-file-3.tmp
-test_output=test-results.csv
+test_output=test-results-limit-300m.csv
 
 write_to_file () {
     if [ $1 -eq 8081 ]; then

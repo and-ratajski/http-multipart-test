@@ -8,16 +8,16 @@ services:
       args:
         - upload_dir=${UPLOAD_DIR}
 #    platform: linux/amd64
-    image: andrat/multipart-${APP_NAME}
-    container_name: andrat-multipart-${APP_NAME}
+    image: effiware/multipart-artic-${APP_NAME}
+    container_name: effi-artic-multipart-${APP_NAME}
     env_file:
       - ./app/.env
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
+    # volumes:
+    #   - /etc/localtime:/etc/localtime:ro
 #      - ./app/logs:/app/logs
     ports:
-      - "8084:80"
-#    mem_limit: 300m
-#    oom_kill_disable: true
+      - "30084:80"
+    # mem_limit: 300m
+    # oom_kill_disable: true
 #    command: >
 #      sh -c "python main.py"

@@ -21,7 +21,7 @@ def upload_test_file():
     f.save(app.config["UPLOAD_FOLDER"] + filename)
 
     try:
-        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)   
     except Exception as e:
         return str(e)
 

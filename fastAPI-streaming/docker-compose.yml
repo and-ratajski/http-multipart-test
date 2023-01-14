@@ -12,12 +12,12 @@ services:
     container_name: andrat-multipart-${APP_NAME}
     env_file:
       - ./app/.env
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./app/logs:/app/logs
+    # volumes:
+    #   - /etc/localtime:/etc/localtime:ro
+    #   - ./app/logs:/app/logs
     ports:
-      - "8085:80"
-    mem_limit: 200m
-    oom_kill_disable: true
+      - "30085:80"
+    # mem_limit: 1000m
+    # oom_kill_disable: true
 #    command: >
 #      sh -c "python main.py"
